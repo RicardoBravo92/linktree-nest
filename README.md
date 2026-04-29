@@ -40,7 +40,7 @@ A powerful and scalable Linktree clone backend built with **NestJS**, **Prisma**
 Clone the repository and install dependencies:
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/RicardoBravo92/linktree-nest
 cd linktree-clone
 npm install
 ```
