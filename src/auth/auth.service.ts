@@ -155,4 +155,29 @@ export class AuthService {
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
-}
+
+  async updateTheme(id: number, themeData: { bgColor?: string; bgGradient?: string; buttonStyle?: string; fontFamily?: string }) {
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: themeData,
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+
+  async updateSocialLinks(userId: number, socialLinks: { platform: string; url: string }[]) {
+    return this.prisma.$transaction(async (tx) => {
+      await tx.socialLink.deleteMany({ where: { userId } });
+      await tx.socialLink.createMany({
+        data: socialLinks.map((link, index) => ({
+          userId,
+          platform: link.platform,
+          url: link.url,
+          order: index,
+        })),
+      });
+      return tx.socialLink.findMany({ where: { userId }, orderBy: { order: 'asc' } });
+    });
+  }}

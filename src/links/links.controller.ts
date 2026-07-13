@@ -11,6 +11,9 @@ import {
 import { LinksService } from './links.service';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
+import { ReorderLinksDto } from './dto/reorder.dto';
+import { UpdateThemeDto } from './dto/update-theme.dto';
+import { UpdateSocialLinksDto } from './dto/social-links.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import {
@@ -32,6 +35,24 @@ export class LinksController {
   @ApiResponse({ status: 201, description: 'Link successfully created' })
   create(@Body() createLinkDto: CreateLinkDto, @GetUser('id') userId: number) {
     return this.linksService.create(createLinkDto, userId);
+  }
+
+  @Get('my-links')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get my links' })
+  @ApiResponse({ status: 200, description: 'List of user links' })
+  findMyLinks(@GetUser('id') userId: number) {
+    return this.linksService.findMyLinks(userId);
+  }
+
+  @Get('analytics')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get analytics for my links' })
+  @ApiResponse({ status: 200, description: 'Analytics data' })
+  getAnalytics(@GetUser('id') userId: number) {
+    return this.linksService.getAnalytics(userId);
   }
 
   @Get()
@@ -62,6 +83,13 @@ export class LinksController {
     return this.linksService.update(+id, updateLinkDto, userId);
   }
 
+  @Patch(':id/click')
+  @ApiOperation({ summary: 'Track a link click' })
+  @ApiResponse({ status: 200, description: 'Click tracked' })
+  incrementClicks(@Param('id') id: string) {
+    return this.linksService.incrementClicks(+id);
+  }
+
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
@@ -71,6 +99,14 @@ export class LinksController {
     return this.linksService.remove(+id, userId);
   }
 
+  @Post('reorder')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Reorder links' })
+  @ApiResponse({ status: 200, description: 'Links successfully reordered' })
+  reorder(@Body() reorderLinksDto: ReorderLinksDto, @GetUser('id') userId: number) {
+    return this.linksService.reorder(reorderLinksDto, userId);
+  }
 
   @Get('user/:username')
   @ApiOperation({ summary: 'Get links by username' })

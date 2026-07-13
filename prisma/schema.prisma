@@ -14,7 +14,15 @@ model User {
   username    String   @unique
   description String?
   image       String?
+
+  // Theme customization
+  bgColor        String? @default("#9333ea")
+  bgGradient     String?
+  buttonStyle    String? @default("rounded")
+  fontFamily     String? @default("sans")
+
   links       Link[]
+  socialLinks SocialLink[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -27,6 +35,19 @@ model Link {
   title       String
   description String?
   image       String?
+  order       Int      @default(0)
+  clicks      Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model SocialLink {
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+  platform String
+  url      String
+  order    Int    @default(0)
+
+  @@unique([userId, platform])
 }

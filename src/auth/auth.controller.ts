@@ -14,6 +14,8 @@ import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdateThemeDto } from '../links/dto/update-theme.dto';
+import { UpdateSocialLinksDto } from '../links/dto/social-links.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from './auth.guard';
 import { GetUser } from './decorators/get-user.decorator';
@@ -57,10 +59,7 @@ export class AuthController {
     schema: {
       type: 'object',
       properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
+        file: { type: 'string', format: 'binary' },
       },
     },
   })
@@ -83,5 +82,28 @@ export class AuthController {
   ) {
     return this.authService.update(String(userId), updateAuthDto);
   }
-}
 
+  @Patch('theme')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user theme' })
+  @ApiResponse({ status: 200, description: 'Theme successfully updated' })
+  updateTheme(
+    @GetUser('id') userId: number,
+    @Body() updateThemeDto: UpdateThemeDto,
+  ) {
+    return this.authService.updateTheme(userId, updateThemeDto);
+  }
+
+  @Post('social-links')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update social links' })
+  @ApiResponse({ status: 200, description: 'Social links successfully updated' })
+  updateSocialLinks(
+    @GetUser('id') userId: number,
+    @Body() updateSocialLinksDto: UpdateSocialLinksDto,
+  ) {
+    return this.authService.updateSocialLinks(userId, updateSocialLinksDto.socialLinks);
+  }
+}

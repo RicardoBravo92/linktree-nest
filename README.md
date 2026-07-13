@@ -1,123 +1,108 @@
-# Linktree Clone API 🚀
+# Linktree Clone API
 
-A powerful and scalable Linktree clone backend built with **NestJS**, **Prisma**, and **PostgreSQL**. This API allows users to create a personal profile and manage a collection of social and custom links.
+Backend built with **NestJS**, **Prisma**, and **PostgreSQL**. Provides user authentication, profile management, link CRUD, analytics, themes, social links, and image hosting.
 
-## ✨ Features
+## Features
 
-- **Authentication**: Secure JWT-based registration and login.
-- **User Profiles**: Manage profile information and upload custom avatars.
-- **Link Management**: Full CRUD operations for personal links (URL, title, description, and images).
-- **Rate Limiting**: Integrated protection against brute-force and DDoS attacks (10 requests/minute per IP).
-- **Image Hosting**: Cloudinary integration for professional image handling and storage.
-- **API Documentation**: Interactive Swagger UI provided.
-- **Database**: Prisma ORM with PostgreSQL for reliable data management.
-- **Modern Tech**: Built with Prisma 7 and NestJS 11.
+- **Authentication**: JWT-based registration and login (supports email or username)
+- **User Profiles**: Profile management, avatar upload (Cloudinary)
+- **Link Management**: Full CRUD with drag-drop ordering, click tracking, and analytics
+- **Themes**: Custom gradients, button styles, and font families per user
+- **Social Links**: Manage Instagram, YouTube, GitHub, etc. per profile
+- **Rate Limiting**: 10 requests/minute per IP
+- **API Docs**: Swagger UI at `/api`
 
----
+## Tech Stack
 
-## 🛠️ Tech Stack
+- [NestJS 11](https://nestjs.com/)
+- [Prisma 7](https://www.prisma.io/) + PostgreSQL
+- [Passport JWT](http://www.passportjs.org/)
+- [Cloudinary](https://cloudinary.com/) for image uploads
+- [@nestjs/throttler](https://github.com/nestjs/throttler) for rate limiting
 
-- **Framework**: [NestJS](https://nestjs.com/)
-- **ORM**: [Prisma 7](https://www.prisma.io/)
-- **Database**: [PostgreSQL](https://www.postgresql.org/)
-- **Authentication**: [Passport JWT](http://www.passportjs.org/)
-- **File Storage**: [Cloudinary](https://cloudinary.com/)
-- **Documentation**: [Swagger / OpenAPI](https://swagger.io/)
-- **Rate Limiting**: [@nestjs/throttler](https://github.com/nestjs/throttler)
-
----
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Node.js (v18 or higher recommended)
-- Docker (for database) or a local PostgreSQL instance
-- Cloudinary Account (for image uploads)
+- Node.js v18+
+- PostgreSQL (local or Docker)
+- Cloudinary account
 
-### 1. Installation
-
-Clone the repository and install dependencies:
+### 1. Install
 
 ```bash
-git clone git@github.com:RicardoBravo92/linktree-nest.git
-cd linktree-clone
+git clone https://github.com/RicardoBravo92/linktree-nest
+cd linktree
 npm install
 ```
 
-### 2. Environment Configuration
+### 2. Environment
 
-Create a `.env` file in the root directory and fill in the required variables (see `.env.template` for reference):
+Copy `.env.template` to `.env` and fill in your values:
 
 ```env
-# Database
 DATABASE_URL="postgresql://postgres:password@localhost:5432/LinktreeDB"
-
-# JWT
-JWT_SECRET="your_very_secret_key"
-
-# Cloudinary
+JWT_SECRET="your_secret"
 CLOUDINARY_CLOUD_NAME="your_cloud_name"
 CLOUDINARY_API_KEY="your_api_key"
 CLOUDINARY_API_SECRET="your_api_secret"
-
-# Server
 PORT=3000
 ```
 
-### 3. Database Setup
-
-Using Prisma to sync your database schema:
+### 3. Database
 
 ```bash
 npx prisma generate
 npx prisma db push
+# or for migrations:
+npx prisma migrate dev
 ```
 
-### 4. Running the Application
+### 4. Run
 
 ```bash
-# Development mode
 npm run start:dev
-
-# Production mode
-npm run build
-npm run start:prod
 ```
 
----
+## API Endpoints
 
-## 📖 API Documentation
+### Auth
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/auth/register` | Register new user |
+| POST | `/auth/login` | Login (email or username) |
+| POST | `/auth/avatar` | Upload avatar (auth required) |
+| PATCH | `/auth/profile` | Update profile info |
+| PATCH | `/auth/theme` | Update theme settings |
+| POST | `/auth/social-links` | Update social links |
 
-Once the server is running, you can access the interactive Swagger documentation at:
+### Links
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/links/my-links` | Get current user's links (auth required) |
+| POST | `/links` | Create a link (auth required) |
+| PATCH | `/links/:id` | Update a link (auth required) |
+| DELETE | `/links/:id` | Delete a link (auth required) |
+| POST | `/links/reorder` | Reorder links (auth required) |
+| PATCH | `/links/:id/click` | Track a click |
+| GET | `/links/analytics` | Get click analytics (auth required) |
+| GET | `/links/user/:username` | Get public profile + links |
 
-🔗 [http://localhost:3000/api](http://localhost:3000/api)
+### Swagger
 
-Here you can test all endpoints, including authentication and file uploads, directly from your browser.
+Available at [http://localhost:3000/api](http://localhost:3000/api) when the server is running.
 
----
+## Project Structure
 
-## 🔒 Rate Limiting
-
-To ensure stability and security, the API implements a global rate limit:
-- **Default limit**: 10 requests every 60 seconds per IP address.
-- If exceeded, the API will return a `429 Too Many Requests` error.
-
----
-
-## 📂 Project Structure
-
-```text
+```
 src/
-├── auth/           # Authentication logic, guards, and decorators
-├── links/          # Link CRUD management
+├── auth/           # Authentication, guards, decorators, DTOs
+├── links/          # Link CRUD, reorder, analytics, social links
 ├── prisma/         # Prisma service and module
-├── cloudinary/     # Image upload integration logic
-└── main.ts         # Application entry point
+├── cloudinary/     # Image upload integration
+└── main.ts         # App entry point (CORS enabled)
 ```
 
----
+## License
 
-## 📄 License
-
-This project is [MIT licensed](LICENSE).
+MIT
