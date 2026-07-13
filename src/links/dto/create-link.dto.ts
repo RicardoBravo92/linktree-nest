@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, IsUrl, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUrl, IsNumber, Allow } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateLinkDto {
