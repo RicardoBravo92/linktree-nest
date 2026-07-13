@@ -12,6 +12,8 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
+import { UpdateAuthDto } from './dto/update-auth.dto';
+import { LoginDto } from './dto/login.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from './auth.guard';
 import { GetUser } from './decorators/get-user.decorator';
@@ -41,8 +43,8 @@ export class AuthController {
   @ApiOperation({ summary: 'User login' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  login(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.login(createAuthDto);
+  login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
   }
 
   @Post('avatar')
@@ -68,6 +70,18 @@ export class AuthController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this.authService.uploadAvatar(userId, file);
+  }
+
+  @Patch('profile')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user profile' })
+  @ApiResponse({ status: 200, description: 'Profile successfully updated' })
+  updateProfile(
+    @GetUser('id') userId: number,
+    @Body() updateAuthDto: UpdateAuthDto,
+  ) {
+    return this.authService.update(String(userId), updateAuthDto);
   }
 }
 

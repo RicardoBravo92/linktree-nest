@@ -4,6 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
+import { LoginDto } from './dto/login.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -66,16 +67,20 @@ export class AuthService {
   }
 
   //login
-  async login(loginDto: Partial<CreateAuthDto>) {
-    const { email: rawEmail, password } = loginDto;
-    const email = rawEmail?.toLowerCase();
+  async login(loginDto: LoginDto) {
+    const { emailOrUsername, password } = loginDto;
 
-    if (!email || !password) {
-      throw new BadRequestException('Email and password are required');
+    if (!emailOrUsername || !password) {
+      throw new BadRequestException('Email/username and password are required');
     }
 
-    const user = await this.prisma.user.findUnique({
-      where: { email },
+    const user = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: emailOrUsername.toLowerCase() },
+          { username: emailOrUsername },
+        ],
+      },
     });
 
     if (!user) {
@@ -103,6 +108,31 @@ export class AuthService {
   //update user
   async update(id: string, updateAuthDto: UpdateAuthDto) {
     const idNumber = Number(id);
+
+    if (updateAuthDto.email) {
+      const existingEmail = await this.prisma.user.findFirst({
+        where: {
+          email: updateAuthDto.email.toLowerCase(),
+          NOT: { id: idNumber },
+        },
+      });
+      if (existingEmail) {
+        throw new BadRequestException('This email is already in use by another user');
+      }
+    }
+
+    if (updateAuthDto.username) {
+      const existingUsername = await this.prisma.user.findFirst({
+        where: {
+          username: updateAuthDto.username,
+          NOT: { id: idNumber },
+        },
+      });
+      if (existingUsername) {
+        throw new BadRequestException('This username is already in use by another user');
+      }
+    }
+
     const user = await this.prisma.user.update({
       where: { id: idNumber },
       data: updateAuthDto,

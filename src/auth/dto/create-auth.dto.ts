@@ -1,4 +1,4 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsString, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -26,6 +26,7 @@ export class CreateAuthDto {
     example: 'Software Engineer',
     required: false,
   })
+  @IsOptional()
   @IsString()
   description?: string;
 }

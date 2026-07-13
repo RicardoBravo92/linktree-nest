@@ -62,8 +62,26 @@ export class LinksService {
   }
 
   async findByUsername(username: string) {
-    return this.prisma.link.findMany({
-      where: { user: { username } },
+    const user = await this.prisma.user.findFirst({
+      where: { username },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+        image: true,
+        description: true,
+      },
     });
+
+    if (!user) {
+      throw new NotFoundException(`User "${username}" not found`);
+    }
+
+    const links = await this.prisma.link.findMany({
+      where: { userId: user.id },
+    });
+
+    return { user, links };
   }
 }
