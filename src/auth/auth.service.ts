@@ -19,7 +19,6 @@ export class AuthService {
     private cloudinary: CloudinaryService,
   ) {}
 
-  //register
   async register(createAuthDto: CreateAuthDto) {
     const {
       email: rawEmail,
@@ -66,7 +65,6 @@ export class AuthService {
     };
   }
 
-  //login
   async login(loginDto: LoginDto) {
     const { emailOrUsername, password } = loginDto;
 
@@ -105,7 +103,6 @@ export class AuthService {
     };
   }
 
-  //update user
   async update(id: string, updateAuthDto: UpdateAuthDto) {
     const idNumber = Number(id);
 
@@ -166,18 +163,4 @@ export class AuthService {
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
-
-  async updateSocialLinks(userId: number, socialLinks: { platform: string; url: string }[]) {
-    return this.prisma.$transaction(async (tx) => {
-      await tx.socialLink.deleteMany({ where: { userId } });
-      await tx.socialLink.createMany({
-        data: socialLinks.map((link, index) => ({
-          userId,
-          platform: link.platform,
-          url: link.url,
-          order: index,
-        })),
-      });
-      return tx.socialLink.findMany({ where: { userId }, orderBy: { order: 'asc' } });
-    });
-  }}
+}

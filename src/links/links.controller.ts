@@ -12,8 +12,6 @@ import { LinksService } from './links.service';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
 import { ReorderLinksDto } from './dto/reorder.dto';
-import { UpdateThemeDto } from './dto/update-theme.dto';
-import { UpdateSocialLinksDto } from './dto/social-links.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import {

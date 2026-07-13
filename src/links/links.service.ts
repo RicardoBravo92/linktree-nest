@@ -77,19 +77,19 @@ export class LinksService {
     const updatedCount = results.reduce((sum, r) => sum + r.count, 0);
     if (updatedCount !== reorderLinksDto.links.length) {
       throw new ForbiddenException('Some links could not be reordered');
+    }
+    return { message: 'Links reordered successfully' };
+  }
+
   async incrementClicks(id: number) {
     try {
       return await this.prisma.link.update({
         where: { id },
         data: { clicks: { increment: 1 } },
       });
-    } catch (e) {
+    } catch {
       throw new NotFoundException(`Link with ID ${id} not found`);
     }
-  }
-      where: { id },
-      data: { clicks: { increment: 1 } },
-    });
   }
 
   async getAnalytics(userId: number) {
@@ -126,11 +126,6 @@ export class LinksService {
       orderBy: { order: 'asc' },
     });
 
-    const socialLinks = await this.prisma.socialLink.findMany({
-      where: { userId: user.id },
-      orderBy: { order: 'asc' },
-    });
-
-    return { user, links, socialLinks };
+    return { user, links };
   }
 }

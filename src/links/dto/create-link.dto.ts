@@ -5,7 +5,6 @@ export class CreateLinkDto {
   @ApiProperty({ description: 'The URL of the link', example: 'https://google.com' })
   @IsString()
   @IsNotEmpty()
-  @IsUrl()
   url: string;
 
   @ApiProperty({ description: 'The title of the link', example: 'Google' })
@@ -28,4 +27,9 @@ export class CreateLinkDto {
   @IsNumber()
   @IsOptional()
   order?: number;
+
+  @ApiProperty({ description: 'Social platform name (null for custom links)', example: 'GitHub', required: false })
+  @IsString()
+  @IsOptional()
+  platform?: string;
 }
