@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { LoginDto } from './dto/login.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -20,13 +16,7 @@ export class AuthService {
   ) {}
 
   async register(createAuthDto: CreateAuthDto) {
-    const {
-      email: rawEmail,
-      password,
-      name,
-      username,
-      description,
-    } = createAuthDto;
+    const { email: rawEmail, password, name, username, description } = createAuthDto;
     const email = rawEmail.toLowerCase();
 
     const userExists = await this.prisma.user.findFirst({
@@ -36,9 +26,7 @@ export class AuthService {
     });
 
     if (userExists) {
-      throw new BadRequestException(
-        'User with that email or username already exists',
-      );
+      throw new BadRequestException('User with that email or username already exists');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -74,10 +62,7 @@ export class AuthService {
 
     const user = await this.prisma.user.findFirst({
       where: {
-        OR: [
-          { email: emailOrUsername.toLowerCase() },
-          { username: emailOrUsername },
-        ],
+        OR: [{ email: emailOrUsername.toLowerCase() }, { username: emailOrUsername }],
       },
     });
 
@@ -153,7 +138,17 @@ export class AuthService {
     return userWithoutPassword;
   }
 
-  async updateTheme(id: number, themeData: { bgColor?: string; bgGradient?: string; buttonStyle?: string; fontFamily?: string }) {
+  async checkUsername(username: string) {
+    const user = await this.prisma.user.findFirst({
+      where: { username },
+    });
+    return { available: !user };
+  }
+
+  async updateTheme(
+    id: number,
+    themeData: { bgColor?: string; bgGradient?: string; buttonStyle?: string; fontFamily?: string },
+  ) {
     const user = await this.prisma.user.update({
       where: { id },
       data: themeData,

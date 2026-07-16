@@ -4,6 +4,7 @@ import {
   Post,
   Body,
   Patch,
+  Param,
   UseInterceptors,
   UploadedFile,
   UseGuards,
@@ -61,10 +62,7 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 200, description: 'Avatar successfully uploaded' })
-  uploadAvatar(
-    @GetUser('id') userId: number,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
+  uploadAvatar(@GetUser('id') userId: number, @UploadedFile() file: Express.Multer.File) {
     return this.authService.uploadAvatar(userId, file);
   }
 
@@ -73,11 +71,15 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user profile' })
   @ApiResponse({ status: 200, description: 'Profile successfully updated' })
-  updateProfile(
-    @GetUser('id') userId: number,
-    @Body() updateAuthDto: UpdateAuthDto,
-  ) {
+  updateProfile(@GetUser('id') userId: number, @Body() updateAuthDto: UpdateAuthDto) {
     return this.authService.update(String(userId), updateAuthDto);
+  }
+
+  @Get('check-username/:username')
+  @ApiOperation({ summary: 'Check if username is available' })
+  @ApiResponse({ status: 200, description: 'Returns availability status' })
+  checkUsername(@Param('username') username: string) {
+    return this.authService.checkUsername(username);
   }
 
   @Patch('theme')
@@ -85,10 +87,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user theme' })
   @ApiResponse({ status: 200, description: 'Theme successfully updated' })
-  updateTheme(
-    @GetUser('id') userId: number,
-    @Body() updateThemeDto: UpdateThemeDto,
-  ) {
+  updateTheme(@GetUser('id') userId: number, @Body() updateThemeDto: UpdateThemeDto) {
     return this.authService.updateTheme(userId, updateThemeDto);
   }
 }

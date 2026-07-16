@@ -7,7 +7,11 @@ export class UpdateThemeDto {
   @IsOptional()
   bgColor?: string;
 
-  @ApiProperty({ description: 'Background gradient', example: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', required: false })
+  @ApiProperty({
+    description: 'Background gradient',
+    example: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   bgGradient?: string;

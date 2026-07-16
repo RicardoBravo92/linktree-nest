@@ -12,12 +12,20 @@ export class CreateLinkDto {
   @IsNotEmpty()
   title: string;
 
-  @ApiProperty({ description: 'The description of the link', example: 'Search Engine', required: false })
+  @ApiProperty({
+    description: 'The description of the link',
+    example: 'Search Engine',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   description?: string;
 
-  @ApiProperty({ description: 'The image URL for the link', example: 'https://example.com/image.png', required: false })
+  @ApiProperty({
+    description: 'The image URL for the link',
+    example: 'https://example.com/image.png',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
@@ -28,7 +36,11 @@ export class CreateLinkDto {
   @IsOptional()
   order?: number;
 
-  @ApiProperty({ description: 'Social platform name (null for custom links)', example: 'GitHub', required: false })
+  @ApiProperty({
+    description: 'Social platform name (null for custom links)',
+    example: 'GitHub',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   platform?: string;
